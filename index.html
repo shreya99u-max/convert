@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel से CSV कनवर्टर (50-50 विभाजन)</title>
+    <title>Bihari Web Solution - Excel से CSV कनवर्टर</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -18,16 +18,125 @@
             min-height: 100vh;
             padding: 20px;
             direction: ltr;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
+        /* Password Protection Popup */
+        .password-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .password-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 2px solid #4b6cb7;
+            text-align: center;
+        }
+        
+        .password-logo {
+            color: #4b6cb7;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .password-box h2 {
+            color: #182848;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .password-box p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #182848;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #c3cfe2;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: white;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        .password-btn {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .password-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .error-message {
+            color: #ff4757;
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        
+        .password-footer {
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Main Container */
         .container {
             width: 100%;
             max-width: 1000px;
-            margin: 0 auto;
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            display: none; /* Initially hidden */
         }
         
         .header {
@@ -35,16 +144,38 @@
             color: white;
             padding: 25px;
             text-align: center;
+            position: relative;
+        }
+        
+        .company-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .company-logo i {
+            font-size: 32px;
+            color: #ffd700;
+        }
+        
+        .company-logo span {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 10px;
+            margin-top: 10px;
         }
         
-        .header p {
+        .header .tagline {
             font-size: 16px;
             opacity: 0.9;
+            margin-bottom: 10px;
         }
         
         .content {
@@ -89,18 +220,19 @@
         }
         
         .browse-btn {
-            background-color: #4b6cb7;
+            background: linear-gradient(to right, #4b6cb7, #182848);
             color: white;
             border: none;
             padding: 12px 25px;
             border-radius: 50px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
         }
         
         .browse-btn:hover {
-            background-color: #3a56a5;
+            background: linear-gradient(to right, #3a56a5, #0d1a36);
+            transform: translateY(-2px);
         }
         
         .file-info {
@@ -182,6 +314,13 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            background-color: white;
+        }
+        
+        .option-input:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
         }
         
         .actions {
@@ -208,28 +347,28 @@
         }
         
         .convert-btn {
-            background-color: #4b6cb7;
+            background: linear-gradient(to right, #4b6cb7, #182848);
             color: white;
         }
         
         .convert-btn:hover:not(:disabled) {
-            background-color: #3a56a5;
+            background: linear-gradient(to right, #3a56a5, #0d1a36);
             transform: translateY(-2px);
         }
         
         .convert-btn:disabled {
-            background-color: #cccccc;
+            background: #cccccc;
             cursor: not-allowed;
         }
         
         .download-all-btn {
-            background-color: #00b894;
+            background: linear-gradient(to right, #00b894, #008b74);
             color: white;
             display: none;
         }
         
         .download-all-btn:hover {
-            background-color: #00a085;
+            background: linear-gradient(to right, #00a085, #007a63);
             transform: translateY(-2px);
         }
         
@@ -298,7 +437,7 @@
         }
         
         .download-file-btn {
-            background-color: #4b6cb7;
+            background: linear-gradient(to right, #4b6cb7, #182848);
             color: white;
             border: none;
             padding: 8px 15px;
@@ -310,7 +449,7 @@
         }
         
         .download-file-btn:hover {
-            background-color: #3a56a5;
+            background: linear-gradient(to right, #3a56a5, #0d1a36);
         }
         
         .stats {
@@ -347,7 +486,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #00b894;
+            background: linear-gradient(to right, #00b894, #008b74);
             color: white;
             padding: 15px 25px;
             border-radius: 8px;
@@ -446,6 +585,10 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            
+            .password-box {
+                padding: 30px 20px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -454,16 +597,81 @@
             }
             
             .header h1 {
+                font-size: 20px;
+            }
+            
+            .company-logo span {
                 font-size: 22px;
             }
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Password Protection Popup -->
+    <div class="password-popup" id="passwordPopup">
+        <div class="password-box">
+            <div class="password-logo">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Bihari Web Solution</h2>
+            <p>सुरक्षित एक्सेस - कृपया लॉगिन करें</p>
+            
+            <div class="input-group">
+                <label for="username"><i class="fas fa-user"></i> यूज़रनेम</label>
+                <input type="text" id="username" placeholder="यूज़रनेम दर्ज करें">
+            </div>
+            
+            <div class="input-group">
+                <label for="password"><i class="fas fa-key"></i> पासवर्ड</label>
+                <input type="password" id="password" placeholder="पासवर्ड दर्ज करें">
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <button class="password-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> लॉगिन करें
+            </button>
+            
+            <div class="password-footer">
+                <p><strong>डिफ़ॉल्ट क्रेडेंशियल्स:</strong><br>
+                यूज़रनेम: Guddu<br>
+                पासवर्ड: Kumar@123</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Application Container -->
+    <div class="container" id="mainApp">
         <div class="header">
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> लॉगआउट
+            </button>
+            
+            <div class="company-logo">
+                <i class="fas fa-laptop-code"></i>
+                <span>Bihari Web Solution</span>
+            </div>
+            
             <h1><i class="fas fa-file-excel"></i> एक्सेल से CSV कनवर्टर (50-50 विभाजन)</h1>
-            <p>मोबाइल नंबरों को 50-50 के ग्रुप में विभाजित करें और अलग-अलग CSV फ़ाइलें डाउनलोड करें</p>
+            <p class="tagline">मोबाइल नंबरों को 50-50 के ग्रुप में विभाजित करें और अलग-अलग CSV फ़ाइलें डाउनलोड करें</p>
             
             <div class="supported-formats">
                 <span class="format-tag">.xlsx</span>
@@ -559,7 +767,7 @@
         </div>
         
         <div class="footer">
-            <p>यह उपकरण ब्राउज़र में ही काम करता है, फ़ाइलें सर्वर पर अपलोड नहीं होतीं</p>
+            <p>Bihari Web Solution © 2023 | यह उपकरण ब्राउज़र में ही काम करता है, फ़ाइलें सर्वर पर अपलोड नहीं होतीं</p>
         </div>
     </div>
     
@@ -572,7 +780,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <script>
-        // DOM elements
+        // Login credentials
+        const VALID_USERNAME = "Guddu";
+        const VALID_PASSWORD = "Kumar@123";
+        
+        // DOM elements for password popup
+        const passwordPopup = document.getElementById('passwordPopup');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const mainApp = document.getElementById('mainApp');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        // DOM elements for main app
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
@@ -598,7 +819,99 @@
         let csvFiles = []; // Array of {name, data}
         let mobileNumbers = [];
         
-        // Event listeners
+        // Login functionality
+        loginBtn.addEventListener('click', handleLogin);
+        
+        // Also allow login on Enter key
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+        
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+        
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            // Clear previous error
+            errorMessage.textContent = '';
+            
+            // Validate credentials
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // Successful login
+                errorMessage.textContent = '';
+                errorMessage.style.color = '#00b894';
+                
+                // Show success message briefly
+                errorMessage.textContent = 'लॉगिन सफल! लोड हो रहा है...';
+                
+                // Simulate loading and show main app
+                setTimeout(() => {
+                    passwordPopup.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    showNotification('Bihari Web Solution में आपका स्वागत है!');
+                }, 800);
+            } else {
+                // Invalid credentials
+                errorMessage.textContent = 'गलत यूज़रनेम या पासवर्ड! कृपया फिर से प्रयास करें।';
+                errorMessage.style.color = '#ff4757';
+                
+                // Shake animation for error
+                passwordPopup.style.animation = 'none';
+                setTimeout(() => {
+                    passwordPopup.style.animation = 'shake 0.5s';
+                }, 10);
+                
+                // Clear password field
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        
+        // Logout functionality
+        logoutBtn.addEventListener('click', function() {
+            // Show confirmation
+            if (confirm('क्या आप लॉगआउट करना चाहते हैं?')) {
+                // Reset main app
+                resetFile();
+                mainApp.style.display = 'none';
+                
+                // Reset login form
+                usernameInput.value = '';
+                passwordInput.value = '';
+                errorMessage.textContent = '';
+                
+                // Show login popup
+                passwordPopup.style.display = 'flex';
+                usernameInput.focus();
+                
+                showNotification('सफलतापूर्वक लॉगआउट हो गया');
+            }
+        });
+        
+        // Add CSS for shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Set focus to username field when page loads
+        window.addEventListener('load', function() {
+            usernameInput.focus();
+        });
+        
+        // Main app functionality
         browseBtn.addEventListener('click', () => fileInput.click());
         uploadArea.addEventListener('click', () => fileInput.click());
         
@@ -875,9 +1188,9 @@
             
             // Set color based on type
             if (type === 'error') {
-                notification.style.backgroundColor = '#ff4757';
+                notification.style.background = 'linear-gradient(to right, #ff4757, #ff3838)';
             } else {
-                notification.style.backgroundColor = '#00b894';
+                notification.style.background = 'linear-gradient(to right, #00b894, #008b74)';
             }
             
             notification.classList.add('show');
