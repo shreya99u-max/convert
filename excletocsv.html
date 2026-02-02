@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>एक्सेल से CSV कनवर्टर</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: ltr;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #4b6cb7;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #f8f9ff;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            background-color: #eef1ff;
+            border-color: #3a56a5;
+        }
+        
+        .upload-area i {
+            font-size: 60px;
+            color: #4b6cb7;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        
+        .upload-area p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .browse-btn:hover {
+            background-color: #3a56a5;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .file-info.show {
+            display: flex;
+        }
+        
+        .file-details {
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-icon {
+            font-size: 30px;
+            color: #4b6cb7;
+            margin-right: 15px;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .file-size {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .remove-file {
+            background: none;
+            border: none;
+            color: #ff4757;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .convert-btn {
+            background-color: #4b6cb7;
+            color: white;
+        }
+        
+        .convert-btn:hover:not(:disabled) {
+            background-color: #3a56a5;
+            transform: translateY(-2px);
+        }
+        
+        .convert-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .download-btn {
+            background-color: #00b894;
+            color: white;
+            display: none;
+        }
+        
+        .download-btn:hover {
+            background-color: #00a085;
+            transform: translateY(-2px);
+        }
+        
+        .instructions {
+            background-color: #f8f9ff;
+            border-left: 4px solid #4b6cb7;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            color: #555;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00b894;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            display: block;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+        
+        .supported-formats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .format-tag {
+            background-color: #eef1ff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #4b6cb7;
+            border: 1px solid #d1d9ff;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-excel"></i> एक्सेल से CSV कनवर्टर</h1>
+            <p>अपनी एक्सेल फ़ाइल अपलोड करें और CSV प्रारूप में डाउनलोड करें</p>
+            
+            <div class="supported-formats">
+                <span class="format-tag">.xlsx</span>
+                <span class="format-tag">.xls</span>
+                <span class="format-tag">.csv (आउटपुट)</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>एक्सेल फ़ाइल अपलोड करें</h3>
+                <p>फ़ाइल खींचकर यहाँ छोड़ें या ब्राउज़ बटन पर क्लिक करें</p>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+                <button class="browse-btn" id="browseBtn">फ़ाइल चुनें</button>
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <div class="file-details">
+                    <i class="fas fa-file-excel file-icon"></i>
+                    <div>
+                        <div class="file-name" id="fileName">फ़ाइल का नाम</div>
+                        <div class="file-size" id="fileSize">फ़ाइल का आकार</div>
+                    </div>
+                </div>
+                <button class="remove-file" id="removeFile">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="actions">
+                <button class="btn convert-btn" id="convertBtn" disabled>
+                    <i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें
+                </button>
+                <button class="btn download-btn" id="downloadBtn">
+                    <i class="fas fa-download"></i> CSV डाउनलोड करें
+                </button>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> कैसे काम करता है:</h3>
+                <ul>
+                    <li>ऊपर दिए गए क्षेत्र पर क्लिक करके या ब्राउज़ बटन से एक्सेल फ़ाइल चुनें</li>
+                    <li>"CSV में कनवर्ट करें" बटन पर क्लिक करें</li>
+                    <li>कन्वर्ट होने के बाद "CSV डाउनलोड करें" बटन दिखाई देगा</li>
+                    <li>CSV फ़ाइल डाउनलोड करने के लिए उस बटन पर क्लिक करें</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>यह उपकरण ब्राउज़र में ही काम करता है, फ़ाइलें सर्वर पर अपलोड नहीं होतीं</p>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        फ़ाइल सफलतापूर्वक कनवर्ट हो गई है!
+    </div>
+
+    <!-- Required libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const notification = document.getElementById('notification');
+        
+        // Variables
+        let uploadedFile = null;
+        let csvData = null;
+        
+        // Event listeners
+        browseBtn.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#00b894';
+            uploadArea.style.backgroundColor = '#e8f6f3';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#4b6cb7';
+            uploadArea.style.backgroundColor = '#f8f9ff';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4b6cb7';
+            uploadArea.style.backgroundColor = '#f8f9ff';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        removeFile.addEventListener('click', () => {
+            resetFile();
+        });
+        
+        convertBtn.addEventListener('click', convertToCSV);
+        downloadBtn.addEventListener('click', downloadCSV);
+        
+        // Handle file selection
+        function handleFile(file) {
+            // Check if file is Excel
+            const validExtensions = ['.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!validExtensions.includes(fileExtension)) {
+                showNotification('कृपया केवल एक्सेल फ़ाइलें अपलोड करें (.xlsx, .xls)', 'error');
+                return;
+            }
+            
+            uploadedFile = file;
+            
+            // Display file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            
+            // Enable convert button
+            convertBtn.disabled = false;
+            
+            showNotification('फ़ाइल सफलतापूर्वक अपलोड हो गई');
+        }
+        
+        // Reset file selection
+        function resetFile() {
+            uploadedFile = null;
+            csvData = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            convertBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+        }
+        
+        // Convert Excel to CSV
+        function convertToCSV() {
+            if (!uploadedFile) return;
+            
+            convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> कनवर्ट हो रहा है...';
+            convertBtn.disabled = true;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get the first worksheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Convert to CSV
+                    csvData = XLSX.utils.sheet_to_csv(worksheet);
+                    
+                    // Enable download button
+                    downloadBtn.style.display = 'flex';
+                    
+                    // Show success notification
+                    showNotification('फ़ाइल सफलतापूर्वक CSV में कनवर्ट हो गई');
+                    
+                    convertBtn.innerHTML = '<i class="fas fa-check"></i> कनवर्ट हो गया';
+                    
+                    // Scroll to download button
+                    downloadBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch (error) {
+                    showNotification('फ़ाइल कनवर्ट करने में त्रुटि: ' + error.message, 'error');
+                    convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें';
+                    convertBtn.disabled = false;
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('फ़ाइल पढ़ने में त्रुटि हुई', 'error');
+                convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें';
+                convertBtn.disabled = false;
+            };
+            
+            reader.readAsArrayBuffer(uploadedFile);
+        }
+        
+        // Download CSV file
+        function downloadCSV() {
+            if (!csvData) return;
+            
+            // Create a blob and download link
+            const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            
+            // Get original filename and change extension to .csv
+            const originalName = uploadedFile.name;
+            const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
+            const csvFileName = baseName + '.csv';
+            
+            link.href = url;
+            link.setAttribute('download', csvFileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('CSV फ़ाइल डाउनलोड शुरू हो गई');
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            
+            // Set color based on type
+            if (type === 'error') {
+                notification.style.backgroundColor = '#ff4757';
+            } else {
+                notification.style.backgroundColor = '#00b894';
+            }
+            
+            notification.classList.add('show');
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
