@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>एक्सेल से CSV कनवर्टर</title>
+    <title>Excel से CSV कनवर्टर (50-50 विभाजन)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -16,16 +16,14 @@
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
             direction: ltr;
         }
         
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
+            margin: 0 auto;
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -150,11 +148,48 @@
             cursor: pointer;
         }
         
+        .options {
+            background-color: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4b6cb7;
+        }
+        
+        .options h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .option-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .option-label {
+            width: 200px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .option-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
         .actions {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         .btn {
@@ -169,6 +204,7 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.3s;
+            min-width: 200px;
         }
         
         .convert-btn {
@@ -186,15 +222,167 @@
             cursor: not-allowed;
         }
         
-        .download-btn {
+        .download-all-btn {
             background-color: #00b894;
             color: white;
             display: none;
         }
         
-        .download-btn:hover {
+        .download-all-btn:hover {
             background-color: #00a085;
             transform: translateY(-2px);
+        }
+        
+        .files-list {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .files-list.show {
+            display: block;
+        }
+        
+        .files-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .files-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .file-item {
+            background-color: #f0f4ff;
+            border: 1px solid #d1d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .file-item:hover {
+            background-color: #e1e7ff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-item-icon {
+            font-size: 30px;
+            color: #4b6cb7;
+            margin-bottom: 10px;
+        }
+        
+        .file-item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        
+        .file-item-size {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .download-file-btn {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .download-file-btn:hover {
+            background-color: #3a56a5;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .stats.show {
+            display: flex;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4b6cb7;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00b894;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        .notification.show {
+            display: block;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+        
+        .supported-formats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .format-tag {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
         }
         
         .instructions {
@@ -227,55 +415,19 @@
             border-top: 1px solid #eee;
         }
         
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #00b894;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            display: none;
-            z-index: 1000;
-        }
-        
-        .notification.show {
-            display: block;
-            animation: fadeInOut 3s ease-in-out;
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(20px); }
-            15% { opacity: 1; transform: translateY(0); }
-            85% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(20px); }
-        }
-        
-        .supported-formats {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .format-tag {
-            background-color: #eef1ff;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #4b6cb7;
-            border: 1px solid #d1d9ff;
-        }
-        
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 24px;
-            }
-            
+        @media (max-width: 768px) {
             .content {
                 padding: 20px;
+            }
+            
+            .option-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .option-label {
+                width: 100%;
+                margin-bottom: 5px;
             }
             
             .actions {
@@ -285,19 +437,39 @@
             .btn {
                 width: 100%;
             }
+            
+            .files-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .files-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-file-excel"></i> एक्सेल से CSV कनवर्टर</h1>
-            <p>अपनी एक्सेल फ़ाइल अपलोड करें और CSV प्रारूप में डाउनलोड करें</p>
+            <h1><i class="fas fa-file-excel"></i> एक्सेल से CSV कनवर्टर (50-50 विभाजन)</h1>
+            <p>मोबाइल नंबरों को 50-50 के ग्रुप में विभाजित करें और अलग-अलग CSV फ़ाइलें डाउनलोड करें</p>
             
             <div class="supported-formats">
                 <span class="format-tag">.xlsx</span>
                 <span class="format-tag">.xls</span>
                 <span class="format-tag">.csv (आउटपुट)</span>
+                <span class="format-tag">50 नंबर प्रति फ़ाइल</span>
             </div>
         </div>
         
@@ -323,22 +495,65 @@
                 </button>
             </div>
             
+            <div class="options">
+                <h3><i class="fas fa-cogs"></i> कन्वर्ज़न विकल्प</h3>
+                
+                <div class="option-row">
+                    <div class="option-label">प्रति फ़ाइल नंबरों की संख्या:</div>
+                    <input type="number" id="chunkSize" class="option-input" value="50" min="1" max="1000">
+                </div>
+                
+                <div class="option-row">
+                    <div class="option-label">फ़ाइल नाम प्रीफ़िक्स:</div>
+                    <input type="text" id="fileNamePrefix" class="option-input" value="mobile_numbers" placeholder="फ़ाइल नाम प्रीफ़िक्स">
+                </div>
+                
+                <div class="option-row">
+                    <div class="option-label">कॉलम नाम (नंबर वाला):</div>
+                    <input type="text" id="columnName" class="option-input" value="mobile" placeholder="कॉलम नाम">
+                </div>
+            </div>
+            
             <div class="actions">
                 <button class="btn convert-btn" id="convertBtn" disabled>
-                    <i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें
+                    <i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें (50-50)
                 </button>
-                <button class="btn download-btn" id="downloadBtn">
-                    <i class="fas fa-download"></i> CSV डाउनलोड करें
+                <button class="btn download-all-btn" id="downloadAllBtn">
+                    <i class="fas fa-download"></i> सभी फ़ाइलें डाउनलोड करें (ZIP)
                 </button>
+            </div>
+            
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalNumbers">0</div>
+                    <div class="stat-label">कुल नंबर</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalFiles">0</div>
+                    <div class="stat-label">कुल फ़ाइलें</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="numbersPerFile">50</div>
+                    <div class="stat-label">प्रति फ़ाइल नंबर</div>
+                </div>
+            </div>
+            
+            <div class="files-list" id="filesList">
+                <h3><i class="fas fa-file-csv"></i> उत्पन्न CSV फ़ाइलें</h3>
+                <div class="files-container" id="filesContainer">
+                    <!-- Files will be dynamically added here -->
+                </div>
             </div>
             
             <div class="instructions">
                 <h3><i class="fas fa-info-circle"></i> कैसे काम करता है:</h3>
                 <ul>
-                    <li>ऊपर दिए गए क्षेत्र पर क्लिक करके या ब्राउज़ बटन से एक्सेल फ़ाइल चुनें</li>
+                    <li>एक्सेल फ़ाइल अपलोड करें जिसमें मोबाइल नंबर हों</li>
+                    <li>उपरोक्त विकल्प सेट करें (प्रति फ़ाइल नंबरों की संख्या, फ़ाइल नाम प्रीफ़िक्स)</li>
                     <li>"CSV में कनवर्ट करें" बटन पर क्लिक करें</li>
-                    <li>कन्वर्ट होने के बाद "CSV डाउनलोड करें" बटन दिखाई देगा</li>
-                    <li>CSV फ़ाइल डाउनलोड करने के लिए उस बटन पर क्लिक करें</li>
+                    <li>नंबर 50-50 (या आपके द्वारा सेट की गई संख्या) के ग्रुप में विभाजित हो जाएंगे</li>
+                    <li>प्रत्येक ग्रुप की अलग CSV फ़ाइल बनेगी</li>
+                    <li>प्रत्येक फ़ाइल अलग से डाउनलोड करें या सभी फ़ाइलें एक ZIP में डाउनलोड करें</li>
                 </ul>
             </div>
         </div>
@@ -354,6 +569,7 @@
 
     <!-- Required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <script>
         // DOM elements
@@ -365,16 +581,25 @@
         const fileSize = document.getElementById('fileSize');
         const removeFile = document.getElementById('removeFile');
         const convertBtn = document.getElementById('convertBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
         const notification = document.getElementById('notification');
+        const filesList = document.getElementById('filesList');
+        const filesContainer = document.getElementById('filesContainer');
+        const stats = document.getElementById('stats');
+        const totalNumbers = document.getElementById('totalNumbers');
+        const totalFiles = document.getElementById('totalFiles');
+        const numbersPerFile = document.getElementById('numbersPerFile');
+        const chunkSizeInput = document.getElementById('chunkSize');
+        const fileNamePrefixInput = document.getElementById('fileNamePrefix');
+        const columnNameInput = document.getElementById('columnName');
         
         // Variables
         let uploadedFile = null;
-        let csvData = null;
+        let csvFiles = []; // Array of {name, data}
+        let mobileNumbers = [];
         
         // Event listeners
         browseBtn.addEventListener('click', () => fileInput.click());
-        
         uploadArea.addEventListener('click', () => fileInput.click());
         
         // Drag and drop functionality
@@ -409,8 +634,8 @@
             resetFile();
         });
         
-        convertBtn.addEventListener('click', convertToCSV);
-        downloadBtn.addEventListener('click', downloadCSV);
+        convertBtn.addEventListener('click', convertToCSVChunks);
+        downloadAllBtn.addEventListener('click', downloadAllAsZip);
         
         // Handle file selection
         function handleFile(file) {
@@ -439,15 +664,19 @@
         // Reset file selection
         function resetFile() {
             uploadedFile = null;
-            csvData = null;
+            csvFiles = [];
+            mobileNumbers = [];
             fileInput.value = '';
             fileInfo.classList.remove('show');
             convertBtn.disabled = true;
-            downloadBtn.style.display = 'none';
+            downloadAllBtn.style.display = 'none';
+            filesList.classList.remove('show');
+            stats.classList.remove('show');
+            filesContainer.innerHTML = '';
         }
         
-        // Convert Excel to CSV
-        function convertToCSV() {
+        // Convert Excel to CSV chunks
+        function convertToCSVChunks() {
             if (!uploadedFile) return;
             
             convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> कनवर्ट हो रहा है...';
@@ -464,19 +693,79 @@
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     
-                    // Convert to CSV
-                    csvData = XLSX.utils.sheet_to_csv(worksheet);
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                     
-                    // Enable download button
-                    downloadBtn.style.display = 'flex';
+                    // Extract mobile numbers (assuming they're in the first column)
+                    const columnIndex = 0; // First column
+                    mobileNumbers = [];
+                    
+                    for (let i = 0; i < jsonData.length; i++) {
+                        if (jsonData[i][columnIndex]) {
+                            let number = jsonData[i][columnIndex].toString().trim();
+                            // Clean the number (remove non-numeric characters except +)
+                            number = number.replace(/[^\d+]/g, '');
+                            if (number) {
+                                mobileNumbers.push(number);
+                            }
+                        }
+                    }
+                    
+                    // Remove duplicates
+                    mobileNumbers = [...new Set(mobileNumbers)];
+                    
+                    // Get chunk size from input
+                    const chunkSize = parseInt(chunkSizeInput.value) || 50;
+                    const fileNamePrefix = fileNamePrefixInput.value || 'mobile_numbers';
+                    const columnName = columnNameInput.value || 'mobile';
+                    
+                    // Update stats
+                    numbersPerFile.textContent = chunkSize;
+                    
+                    // Split into chunks
+                    csvFiles = [];
+                    const totalChunks = Math.ceil(mobileNumbers.length / chunkSize);
+                    
+                    for (let i = 0; i < totalChunks; i++) {
+                        const start = i * chunkSize;
+                        const end = start + chunkSize;
+                        const chunk = mobileNumbers.slice(start, end);
+                        
+                        // Create CSV content
+                        let csvContent = `${columnName}\n`;
+                        chunk.forEach(number => {
+                            csvContent += `${number}\n`;
+                        });
+                        
+                        // Create file name
+                        const fileName = `${fileNamePrefix}_${i + 1}_of_${totalChunks}.csv`;
+                        
+                        csvFiles.push({
+                            name: fileName,
+                            data: csvContent,
+                            count: chunk.length
+                        });
+                    }
+                    
+                    // Update stats
+                    totalNumbers.textContent = mobileNumbers.length;
+                    totalFiles.textContent = csvFiles.length;
+                    stats.classList.add('show');
+                    
+                    // Show files list
+                    displayFilesList();
+                    filesList.classList.add('show');
+                    
+                    // Enable download all button
+                    downloadAllBtn.style.display = 'flex';
                     
                     // Show success notification
-                    showNotification('फ़ाइल सफलतापूर्वक CSV में कनवर्ट हो गई');
+                    showNotification(`${mobileNumbers.length} नंबर ${csvFiles.length} फ़ाइलों में विभाजित हो गए (${chunkSize} प्रति फ़ाइल)`);
                     
                     convertBtn.innerHTML = '<i class="fas fa-check"></i> कनवर्ट हो गया';
                     
-                    // Scroll to download button
-                    downloadBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    // Scroll to files list
+                    filesList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } catch (error) {
                     showNotification('फ़ाइल कनवर्ट करने में त्रुटि: ' + error.message, 'error');
                     convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> CSV में कनवर्ट करें';
@@ -493,27 +782,91 @@
             reader.readAsArrayBuffer(uploadedFile);
         }
         
-        // Download CSV file
-        function downloadCSV() {
-            if (!csvData) return;
+        // Display files list
+        function displayFilesList() {
+            filesContainer.innerHTML = '';
             
-            // Create a blob and download link
-            const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            csvFiles.forEach((file, index) => {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                fileElement.innerHTML = `
+                    <i class="fas fa-file-csv file-item-icon"></i>
+                    <div class="file-item-name">${file.name}</div>
+                    <div class="file-item-size">${file.count} नंबर</div>
+                    <button class="download-file-btn" data-index="${index}">
+                        <i class="fas fa-download"></i> डाउनलोड
+                    </button>
+                `;
+                
+                filesContainer.appendChild(fileElement);
+            });
+            
+            // Add event listeners to download buttons
+            document.querySelectorAll('.download-file-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    downloadSingleFile(index);
+                });
+            });
+        }
+        
+        // Download single CSV file
+        function downloadSingleFile(index) {
+            if (!csvFiles[index]) return;
+            
+            const file = csvFiles[index];
+            const blob = new Blob([file.data], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             
-            // Get original filename and change extension to .csv
-            const originalName = uploadedFile.name;
-            const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
-            const csvFileName = baseName + '.csv';
-            
             link.href = url;
-            link.setAttribute('download', csvFileName);
+            link.setAttribute('download', file.name);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            showNotification('CSV फ़ाइल डाउनलोड शुरू हो गई');
+            showNotification(`फ़ाइल डाउनलोड हो गई: ${file.name}`);
+        }
+        
+        // Download all files as ZIP
+        function downloadAllAsZip() {
+            if (csvFiles.length === 0) return;
+            
+            downloadAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ZIP बन रहा है...';
+            downloadAllBtn.disabled = true;
+            
+            const zip = new JSZip();
+            
+            // Add all CSV files to ZIP
+            csvFiles.forEach(file => {
+                zip.file(file.name, file.data);
+            });
+            
+            // Generate ZIP file
+            zip.generateAsync({ type: "blob" })
+                .then(function(content) {
+                    // Create download link
+                    const url = URL.createObjectURL(content);
+                    const link = document.createElement('a');
+                    
+                    const zipFileName = `${fileNamePrefixInput.value || 'mobile_numbers'}_all_files.zip`;
+                    
+                    link.href = url;
+                    link.setAttribute('download', zipFileName);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showNotification(`सभी ${csvFiles.length} फ़ाइलें ZIP में डाउनलोड हो गईं`);
+                    
+                    downloadAllBtn.innerHTML = '<i class="fas fa-download"></i> सभी फ़ाइलें डाउनलोड करें (ZIP)';
+                    downloadAllBtn.disabled = false;
+                })
+                .catch(function(error) {
+                    showNotification('ZIP बनाने में त्रुटि: ' + error.message, 'error');
+                    downloadAllBtn.innerHTML = '<i class="fas fa-download"></i> सभी फ़ाइलें डाउनलोड करें (ZIP)';
+                    downloadAllBtn.disabled = false;
+                });
         }
         
         // Show notification
